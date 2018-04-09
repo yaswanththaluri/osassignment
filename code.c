@@ -12,7 +12,7 @@
 void *thread_fun(void *args);
 
 int processID_status[ array_size ];
-
+int no_of_processes;
 struct process
 {
 int process_number;
@@ -23,7 +23,6 @@ int time;
 
 int main()
 {
-int no_of_processes;
 printf("Enter number of Threads: \n");
 scanf("%d",&no_of_processes);
 
@@ -65,6 +64,8 @@ processID_status[i] = 0;
 }
 return 0;
 }
+
+
 void *thread_fun(void *pro)
 {
 struct process *p = (struct process*)pro;
@@ -76,6 +77,13 @@ sleep(2);
 printf("\n%d is fetching pid...\n",p->process_number);
 p->pid = allocate_pid();
 }
+p->time = sleep_time();
+printf("\n%d: pid = %d, sleep time =%d\n",p->process_number,p->pid,p->time);
+printf("Process %d entered into sleep...\n",p->pid);
+sleep(p->time);
+printf("\n Process:%d Terminated...\n",p->pid);
+release_pid(p->pid);
+display(no_of_processes);
 }
 
 
@@ -88,7 +96,7 @@ if(processID_status[i] == 0)
 {
 processID_status[i] = 1;
 return i+100;
-	}
+}
 }
 return 1;
 }
@@ -110,5 +118,28 @@ else
 {
 printf("Error.........\n");
 return 1;
+}
+}
+
+
+int sleep_time()
+{
+return rand()%10;
+}
+
+
+void release_pid(int p)
+{
+int pid = p-100;
+processID_status[pid] = 0;
+}
+
+
+void display(int n)
+{
+int i;
+for(i = 0;i<n;i++)
+{
+printf("Process: %d = status:  %d\t",i+100,processID_status[i]);
 }
 }
